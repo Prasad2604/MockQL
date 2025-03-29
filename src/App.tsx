@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from "./pages/LandingPage"
+
 import QueryPage from "./pages/QueryPage"
 import ErrorPage from './pages/ErrorPage';
+import { LandingPage } from './pages/LandingPage';
 
 
 function App() {
