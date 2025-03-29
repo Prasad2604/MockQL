@@ -1,24 +1,6 @@
-import { useMemo, useState, useCallback } from 'react';
-import { 
-  Box, 
-  Paper, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Typography, 
-  Chip,
-  Pagination,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  SelectChangeEvent
-} from '@mui/material';
+import { Box, Paper, Typography, Pagination, FormControl, InputLabel, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { QueryResult } from '../types';
-
+import { useState, useCallback } from 'react';
 
 export const ResultsTable = ({ result }: { result: QueryResult }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,23 +8,17 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
 
   const totalPages = Math.ceil(result.rows.length / pageSize);
 
-const handlePageChange = useCallback((_: React.ChangeEvent<unknown>, value: number) => {
+  const handlePageChange = useCallback((_: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
-}, []);
+  }, []);
 
-  const handlePageSizeChange = useCallback((event: SelectChangeEvent<number>) => {
-    setPageSize(Number(event.target.value));
+  const handlePageSizeChange = useCallback((event: any) => {
+    setPageSize(event.target.value);
     setCurrentPage(1);
   }, []);
 
-  const currentPageRows = useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize;
-    return result.rows.slice(startIndex, startIndex + pageSize);
-  }, [result.rows, currentPage, pageSize]);
-
-  if (!result || !result.columns || !result.rows) {
-    return null;
-  }
+  const startIndex = (currentPage - 1) * pageSize;
+  const currentPageRows = result.rows.slice(startIndex, startIndex + pageSize);
 
   return (
     <Paper 
@@ -52,7 +28,6 @@ const handlePageChange = useCallback((_: React.ChangeEvent<unknown>, value: numb
         border: '1px solid',
         borderColor: 'divider',
         bgcolor: '#ffffff',
-        overflow: 'hidden',
         height: '100%',
         display: 'flex',
         flexDirection: 'column'
@@ -62,30 +37,20 @@ const handlePageChange = useCallback((_: React.ChangeEvent<unknown>, value: numb
         p: 2,
         borderBottom: '1px solid',
         borderColor: 'divider',
-        bgcolor: '#f8fafc',
         display: 'flex',
-        gap: 2,
+        justifyContent: 'space-between',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        bgcolor: '#f8fafc'
       }}>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: '#1e293b' }}>
-            Query Results
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Typography variant="body2" color="text.secondary">
+            {result.rows.length} rows
           </Typography>
-          <Chip 
-            label={`${result.rows.length} rows`}
-            size="small"
-            sx={{ 
-              bgcolor: '#e2e8f0',
-              color: '#475569',
-              fontWeight: 500
-            }}
-          />
           <Typography variant="body2" color="text.secondary">
             {result.executionTime.toFixed(2)}ms
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <InputLabel>Rows per page</InputLabel>
             <Select
@@ -120,8 +85,27 @@ const handlePageChange = useCallback((_: React.ChangeEvent<unknown>, value: numb
         </Box>
       </Box>
 
-      <TableContainer sx={{ flex: 1, overflow: 'auto' }}>
-        <Table stickyHeader size="small">
+      <TableContainer 
+        sx={{ 
+          flex: 1,
+          overflow: 'auto',
+          '&::-webkit-scrollbar': {
+            height: '8px',
+            width: '8px',
+          },
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: '#f1f5f9'
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: '#cbd5e1',
+            borderRadius: '4px',
+            '&:hover': {
+              backgroundColor: '#94a3b8'
+            }
+          }
+        }}
+      >
+        <Table stickyHeader size="small" sx={{ minWidth: result.columns.length * 150 }}>
           <TableHead>
             <TableRow>
               {result.columns.map((column) => (
@@ -133,7 +117,8 @@ const handlePageChange = useCallback((_: React.ChangeEvent<unknown>, value: numb
                     color: '#475569',
                     borderBottom: '2px solid',
                     borderColor: 'divider',
-                    py: 1.5
+                    minWidth: 150,
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   {column}
@@ -152,15 +137,17 @@ const handlePageChange = useCallback((_: React.ChangeEvent<unknown>, value: numb
                   }
                 }}
               >
-                {result.columns.map((column) => (
+                {row.map((cell: string | number, cellIndex: number) => (
                   <TableCell
-                    key={column}
+                    key={`${rowIndex}-${cellIndex}`}
                     sx={{
                       color: '#1e293b',
-                      py: 1.5
+                      minWidth: 150,
+                      whiteSpace: 'nowrap',
+                      fontFamily: 'monospace'
                     }}
                   >
-                    {row[column]?.toString() || ''}
+                    {cell?.toString() || ''}
                   </TableCell>
                 ))}
               </TableRow>

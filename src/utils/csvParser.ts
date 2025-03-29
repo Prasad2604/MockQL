@@ -2,7 +2,8 @@ export interface CSVData {
     columns: string[];
     rows: any[][];
   }
-
+  
+  // List of available CSV files in the public/data directory
   const AVAILABLE_TABLES = ['order_details.csv', 'orders.csv', 'products.csv', 'shippers.csv', 'suppliers.csv'];
   
   export const parseCSV = async (fileName: string): Promise<CSVData> => {
@@ -50,7 +51,7 @@ export interface CSVData {
         if (!tableName) {
           throw new Error('No table name found in query');
         }
-        return await parseCSV(`${tableName}`);
+        return await parseCSV(`${tableName}.csv`);
       } else {
         // For custom queries, randomly select one of the available CSV files
         const randomFile = AVAILABLE_TABLES[Math.floor(Math.random() * AVAILABLE_TABLES.length)];

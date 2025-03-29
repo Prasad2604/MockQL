@@ -8,7 +8,7 @@ export interface Query {
   export interface QueryResult {
     columns: string[];
     rows: any[];
-    rowCount: number;
+    // rowCount: number;
     executionTime: number;
   }
   
