@@ -78,17 +78,26 @@ function parseCSVInWorker(fileName: string, csvText: string): Promise<CSVData> {
  *
  * For any query provided, a random CSV file from the available tables is used.
  */
-export const executeQuery = async (sql:string): Promise<CSVData> => {
-  try {
-    console.log(sql);
-    // Pick a random file from AVAILABLE_TABLES for any query
-    const randomFile =
-      AVAILABLE_TABLES[Math.floor(Math.random() * AVAILABLE_TABLES.length)];
-    return await parseCSV(randomFile);
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Query execution failed: ${error.message}`);
+export const executeQuery = async (
+    query: string,
+    tableName?: string
+  ): Promise<CSVData> => {
+    try {
+        console.log("table name : ",tableName);
+      if (tableName) {
+        // Use the provided CSV file.
+        return await parseCSV(tableName);
+      } else {
+        // No table provided—choose a random file.
+        const randomFile =
+        AVAILABLE_TABLES[Math.floor(Math.random() * AVAILABLE_TABLES.length)];
+        console.log("random file : ", randomFile);
+        return await parseCSV(randomFile);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Query execution failed: ${error.message}`);
+      }
+      throw error;
     }
-    throw error;
-  }
-};
+  };

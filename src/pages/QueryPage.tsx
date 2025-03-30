@@ -36,13 +36,13 @@ export default function QueryPage() {
   const [error, setError] = useState<string | null>(null);
   const [toastOpen, setToastOpen] = useState(false);
 
-  const executeAndUpdateHistory = async (sql: string) => {
+  const executeAndUpdateHistory = async (sql: string,tableName?: string) => {
     setIsLoading(true);
     setError(null);
     const startTime = performance.now();
 
     try {
-      const data = await executeQuery(sql);
+      const data = await executeQuery(sql,tableName);
       const executionTime = performance.now() - startTime;
 
       const result: QueryResult = {
@@ -74,10 +74,13 @@ export default function QueryPage() {
 
   const handleQuerySelect = useCallback((queryId: string) => {
     const query = predefinedQueries.find((q) => q.id === queryId);
+    console.log("inside query page: ",query?.id);
     if (query) {
+      console.log("hi");
       setSelectedQuery(query);
       setSqlInput(query.sql);
-      executeAndUpdateHistory(query.sql);
+      executeAndUpdateHistory(query.sql,query.table);
+      console.log(query.sql,query.table);
     }
   }, []);
 

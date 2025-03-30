@@ -3,6 +3,7 @@ export interface Query {
     name: string;
     sql: string;
     description: string;
+    table?: string;
   }
   
   export interface QueryResult {
