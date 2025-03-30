@@ -81,6 +81,8 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
             <Select
               value={pageSize}
               label="Rows per page"
+              aria-label="rows per page"
+              id="row-per-page"
               onChange={handlePageSizeChange}
             >
               <MenuItem value={25}>25</MenuItem>

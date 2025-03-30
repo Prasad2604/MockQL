@@ -165,6 +165,8 @@ export const QueryHistory = ({ history, onSelectQuery, onDeleteQuery }: QueryHis
                       {item.query}
                     </Typography>
                     <IconButton
+                      aria-label='select-options'
+                      title='select-options'
                       size="small"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -179,6 +181,8 @@ export const QueryHistory = ({ history, onSelectQuery, onDeleteQuery }: QueryHis
                     </IconButton>
                     <IconButton
                       size="small"
+                      aria-label='show-detailed-query'
+                      title='show-detailed-query'
                       onClick={() => setExpandedQuery(expandedQuery === item.id ? null : item.id)}
                       sx={{ 
                         color: 'rgba(255, 255, 255, 0.6)',
