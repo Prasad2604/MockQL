@@ -128,6 +128,8 @@ export default function QueryPage() {
       >
         <IconButton
           onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+          aria-label={isHistoryOpen ? "Close history panel" : "Open history panel"} // Add aria-label
+          title={isHistoryOpen ? "Close history panel" : "Open history panel"} // Add title for tooltips
           sx={{
             position: "absolute",
             right: isHistoryOpen ? 8 : "50%",
@@ -216,11 +218,14 @@ export default function QueryPage() {
               }}
             >
               <FormControl size="small" sx={{ minWidth: "70%" }}>
-                <InputLabel>Predefined Queries</InputLabel>
+                <InputLabel id="predefined-queries-label">Predefined Queries</InputLabel>
                 <Select
+                  labelId="predefined-queries-label" // Ensure association with InputLabel
+                  id="predefined-queries"
                   value={selectedQuery?.id || ""}
                   label="Predefined Queries"
                   onChange={(e) => handleQuerySelect(e.target.value)}
+                  aria-label="Select a predefined SQL query" // Add accessible name
                 >
                   {predefinedQueries.map((query) => (
                     <MenuItem key={query.id} value={query.id}>
@@ -235,6 +240,8 @@ export default function QueryPage() {
                 startIcon={<PlayArrowIcon />}
                 onClick={handleRunQuery}
                 disabled={!sqlInput.trim() || isLoading}
+                aria-label="Execute SQL query"
+                title="Execute SQL query"
                 sx={{
                   textTransform: "none",
                   boxShadow: "none",
@@ -284,6 +291,7 @@ export default function QueryPage() {
         autoHideDuration={3000}
         onClose={handleToastClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        role="status"
       >
         <Alert onClose={handleToastClose} severity="success" sx={{ width: "100%" }}>
           Query executed successfully!

@@ -19,6 +19,7 @@ export const SQLEditor = ({ value, onChange }: SQLEditorProps) => {
       value={value}
       onChange={handleEditorChange}
       theme="light"
+      aria-label="SQL Editor"
       options={{
         minimap: { enabled: false },
         fontSize: 14,
@@ -39,7 +40,10 @@ export const SQLEditor = ({ value, onChange }: SQLEditorProps) => {
           verticalSliderSize: 10,
           horizontalSliderSize: 10,
           arrowSize: 30
-        }
+        },
+        accessibilitySupport: "on",
+        quickSuggestions: false,
+        tabIndex: 0,
       }}
     />
   );
