@@ -83,7 +83,7 @@ export const executeQuery = async (
     tableName?: string
   ): Promise<CSVData> => {
     try {
-        console.log("table name : ",tableName);
+        console.log("table name : ",query);
       if (tableName) {
         // Use the provided CSV file.
         return await parseCSV(tableName);

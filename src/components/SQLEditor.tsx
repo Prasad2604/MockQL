@@ -1,5 +1,6 @@
-import { Editor } from '@monaco-editor/react';
+import { default as Editor } from '@monaco-editor/react';
 import { useCallback } from 'react';
+
 
 interface SQLEditorProps {
   value: string;

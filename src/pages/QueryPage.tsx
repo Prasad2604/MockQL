@@ -3,19 +3,18 @@ import React, { useState, useCallback, lazy, Suspense } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
-import {
-  Box,
-  Typography,
-  Paper,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  IconButton,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+
 import { Query, QueryResult, QueryHistory as QueryHistoryType } from "../types";
 import { predefinedQueries } from "../data/predefinedQueries";
 import { executeQuery } from "../utils/csvParserOptimized"; // optimized CSV parser
