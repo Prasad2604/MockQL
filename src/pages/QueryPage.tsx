@@ -1,22 +1,34 @@
-import { useState, useCallback } from "react";
+// QueryPage.tsx
+import React, { useState, useCallback, lazy, Suspense } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
-import { 
-  Box, Typography, Paper, Button, FormControl, InputLabel, 
-  Select, MenuItem, IconButton, Snackbar, Alert 
+import {
+  Box,
+  Typography,
+  Paper,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  IconButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-import { SQLEditor } from "../components/SQLEditor";
-import { Query, QueryResult, QueryHistory as QueryHistoryType } from '../types';
-import { ResultsTable } from "../components/ResultTable";
-import { predefinedQueries } from '../data/predefinedQueries';
-import { executeQuery } from '../utils/csvParser';
-import { v4 as uuidv4 } from 'uuid';
-import { QueryHistory } from "../components/QueryHistory";
+import { Query, QueryResult, QueryHistory as QueryHistoryType } from "../types";
+import { predefinedQueries } from "../data/predefinedQueries";
+import { executeQuery } from "../utils/csvParserOptimized"; // optimized CSV parser
+import { v4 as uuidv4 } from "uuid";
+
+// Lazy-load heavy components
+const SQLEditor = lazy(() => import("../components/SQLEditor").then(module => ({ default: module.SQLEditor })));
+const ResultsTable = lazy(() => import("../components/ResultTable").then(module => ({default: module.ResultsTable})));
+const QueryHistory = lazy(() => import("../components/QueryHistory").then(module => ({default: module.QueryHistory})));
 
 export default function QueryPage() {
   const [selectedQuery, setSelectedQuery] = useState<Query | null>(null);
-  const [sqlInput, setSqlInput] = useState('');
+  const [sqlInput, setSqlInput] = useState("");
   const [queryResult, setQueryResult] = useState<QueryResult | null>(null);
   const [history, setHistory] = useState<QueryHistoryType[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
@@ -40,20 +52,20 @@ export default function QueryPage() {
       };
 
       setQueryResult(result);
-      
+
       const historyItem: QueryHistoryType = {
         id: uuidv4(),
         query: sql,
         timestamp: new Date(),
         result,
       };
-      
-      setHistory(prev => [historyItem, ...prev].slice(0, 10));
 
-      // Show toast notification for successful execution
+      // Keep only the 10 most recent queries
+      setHistory((prev) => [historyItem, ...prev].slice(0, 10));
+
       setToastOpen(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to execute query');
+      setError(err instanceof Error ? err.message : "Failed to execute query");
       setQueryResult(null);
     } finally {
       setIsLoading(false);
@@ -61,7 +73,7 @@ export default function QueryPage() {
   };
 
   const handleQuerySelect = useCallback((queryId: string) => {
-    const query = predefinedQueries.find(q => q.id === queryId);
+    const query = predefinedQueries.find((q) => q.id === queryId);
     if (query) {
       setSelectedQuery(query);
       setSqlInput(query.sql);
@@ -79,119 +91,132 @@ export default function QueryPage() {
   }, []);
 
   const handleHistoryDelete = useCallback((id: string) => {
-    setHistory(prev => prev.filter(item => item.id !== id));
+    setHistory((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  const handleToastClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') return;
+  const handleToastClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === "clickaway") return;
     setToastOpen(false);
   };
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      height: '100vh',
-      bgcolor: '#f1f5f9',
-      display: 'flex',
-      overflow: 'hidden'
-    }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        height: "100vh",
+        bgcolor: "#f1f5f9",
+        display: "flex",
+        overflow: "hidden",
+      }}
+    >
       {/* History Panel */}
       <Box
         sx={{
           width: isHistoryOpen ? 300 : 40,
-          height: '100vh',
-          borderRight: '1px solid',
-          borderColor: 'divider',
-          bgcolor: '#1e293b',
-          transition: 'width 0.3s ease',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          position: 'relative'
+          height: "100vh",
+          borderRight: "1px solid",
+          borderColor: "divider",
+          bgcolor: "#1e293b",
+          transition: "width 0.3s ease",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          position: "relative",
         }}
       >
         <IconButton
           onClick={() => setIsHistoryOpen(!isHistoryOpen)}
           sx={{
-            position: 'absolute',
-            right: isHistoryOpen ? 8 : '50%',
+            position: "absolute",
+            right: isHistoryOpen ? 8 : "50%",
             top: 8,
-            transform: isHistoryOpen ? 'none' : 'translateX(50%)',
-            color: 'white',
-            '&:hover': {
-              bgcolor: 'rgba(255, 255, 255, 0.1)'
+            transform: isHistoryOpen ? "none" : "translateX(50%)",
+            color: "white",
+            "&:hover": {
+              bgcolor: "rgba(255, 255, 255, 0.1)",
             },
-            transition: 'all 0.3s ease',
-            zIndex: 2
+            transition: "all 0.3s ease",
+            zIndex: 2,
           }}
         >
           {isHistoryOpen ? <CloseIcon /> : <MenuIcon />}
         </IconButton>
 
         {isHistoryOpen && (
-          <Box sx={{ 
-            width: '100%', 
-            height: '100%',
-            pt: 6
-          }}>
-            <QueryHistory
-              history={history}
-              onSelectQuery={handleHistorySelect}
-              onDeleteQuery={handleHistoryDelete}
-            />
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              pt: 6,
+              overflowY: "auto",
+            }}
+          >
+            <Suspense fallback={<div>Loading History...</div>}>
+              <QueryHistory
+                history={history}
+                onSelectQuery={handleHistorySelect}
+                onDeleteQuery={handleHistoryDelete}
+              />
+            </Suspense>
           </Box>
         )}
       </Box>
 
       {/* Main Content */}
-      <Box sx={{ 
-        flex: 1,
-        height: '100vh',
-        overflow: 'hidden',
-        p: 4
-      }}>
+      <Box
+        sx={{
+          flex: 1,
+          height: "100vh",
+          overflow: "hidden",
+          p: 4,
+        }}
+      >
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, color: '#1e293b', mb: 1 }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, color: "#1e293b", mb: 1 }}>
             SQL Query Visualizer
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Write and execute SQL queries with instant visualization
           </Typography>
         </Box>
-        
-        <Box sx={{ 
-          height: 'calc(100vh - 140px)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 3
-        }}>
+
+        <Box
+          sx={{
+            height: "calc(100vh - 140px)",
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+          }}
+        >
           <Paper
             elevation={0}
             sx={{
               borderRadius: 3,
-              border: '1px solid',
-              borderColor: 'divider',
-              bgcolor: '#ffffff',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              flex: '0 0 35%'
+              border: "1px solid",
+              borderColor: "divider",
+              bgcolor: "#ffffff",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+              flex: "0 0 35%",
             }}
           >
-            <Box sx={{ 
-              p: 2,
-              borderBottom: '1px solid',
-              borderColor: 'divider',
-              bgcolor: '#f8fafc',
-              display: 'flex',
-              gap: 2,
-              alignItems: 'center',
-              justifyContent: 'space-between'
-            }}>
+            <Box
+              sx={{
+                p: 2,
+                borderBottom: "1px solid",
+                borderColor: "divider",
+                bgcolor: "#f8fafc",
+                display: "flex",
+                gap: 2,
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               <FormControl size="small" sx={{ minWidth: "70%" }}>
                 <InputLabel>Predefined Queries</InputLabel>
                 <Select
-                  value={selectedQuery?.id || ''}
+                  value={selectedQuery?.id || ""}
                   label="Predefined Queries"
                   onChange={(e) => handleQuerySelect(e.target.value)}
                 >
@@ -209,43 +234,44 @@ export default function QueryPage() {
                 onClick={handleRunQuery}
                 disabled={!sqlInput.trim() || isLoading}
                 sx={{
-                  textTransform: 'none',
-                  boxShadow: 'none',
-                  '&:hover': {
-                    boxShadow: 'none'
-                  }
+                  textTransform: "none",
+                  boxShadow: "none",
+                  "&:hover": {
+                    boxShadow: "none",
+                  },
                 }}
               >
-                {isLoading ? 'Running...' : 'Run Query'}
+                {isLoading ? "Running..." : "Run Query"}
               </Button>
             </Box>
-            <Box sx={{ flex: 1, position: 'relative' }}>
-              <SQLEditor
-                value={sqlInput}
-                onChange={setSqlInput}
-              />
+            <Box sx={{ flex: 1, position: "relative" }}>
+              <Suspense fallback={<div>Loading Editor...</div>}>
+                <SQLEditor value={sqlInput} onChange={setSqlInput} />
+              </Suspense>
             </Box>
           </Paper>
-          
-          <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
+
+          <Box sx={{ flex: 1, minHeight: 0, overflow: "auto" }}>
             {error ? (
               <Paper
                 elevation={0}
                 sx={{
                   p: 3,
                   borderRadius: 3,
-                  border: '1px solid #fecdd3',
-                  bgcolor: '#fff1f2',
-                  color: '#be123c'
+                  border: "1px solid #fecdd3",
+                  bgcolor: "#fff1f2",
+                  color: "#be123c",
                 }}
               >
                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
                   {error}
                 </Typography>
               </Paper>
-            ) : queryResult && (
-              <ResultsTable result={queryResult} />
-            )}
+            ) : queryResult ? (
+              <Suspense fallback={<div>Loading Results...</div>}>
+                <ResultsTable result={queryResult} />
+              </Suspense>
+            ) : null}
           </Box>
         </Box>
       </Box>
@@ -255,9 +281,9 @@ export default function QueryPage() {
         open={toastOpen}
         autoHideDuration={3000}
         onClose={handleToastClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
-        <Alert onClose={handleToastClose} severity="success" sx={{ width: '100%' }}>
+        <Alert onClose={handleToastClose} severity="success" sx={{ width: "100%" }}>
           Query executed successfully!
         </Alert>
       </Snackbar>

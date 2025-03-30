@@ -30,3 +30,8 @@ export interface Query {
     columns: TableColumn[];
     rowCount: number;
   } 
+
+  export interface CSVData {
+    columns: string[];
+    rows: Record<string, any>[];
+  }
