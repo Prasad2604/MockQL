@@ -2,15 +2,17 @@ import { useState, useCallback } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, Typography, Paper, Button, FormControl, InputLabel, Select, MenuItem, IconButton } from "@mui/material";
-import {SQLEditor} from "../components/SQLEditor";
-import { Query, QueryResult,QueryHistory as QueryHistoryType } from '../types';
+import { 
+  Box, Typography, Paper, Button, FormControl, InputLabel, 
+  Select, MenuItem, IconButton, Snackbar, Alert 
+} from "@mui/material";
+import { SQLEditor } from "../components/SQLEditor";
+import { Query, QueryResult, QueryHistory as QueryHistoryType } from '../types';
 import { ResultsTable } from "../components/ResultTable";
 import { predefinedQueries } from '../data/predefinedQueries';
 import { executeQuery } from '../utils/csvParser';
 import { v4 as uuidv4 } from 'uuid';
 import { QueryHistory } from "../components/QueryHistory";
-
 
 export default function QueryPage() {
   const [selectedQuery, setSelectedQuery] = useState<Query | null>(null);
@@ -20,6 +22,7 @@ export default function QueryPage() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [toastOpen, setToastOpen] = useState(false);
 
   const executeAndUpdateHistory = async (sql: string) => {
     setIsLoading(true);
@@ -33,7 +36,7 @@ export default function QueryPage() {
       const result: QueryResult = {
         columns: data.columns,
         rows: data.rows,
-        executionTime
+        executionTime,
       };
 
       setQueryResult(result);
@@ -42,10 +45,13 @@ export default function QueryPage() {
         id: uuidv4(),
         query: sql,
         timestamp: new Date(),
-        result
+        result,
       };
       
       setHistory(prev => [historyItem, ...prev].slice(0, 10));
+
+      // Show toast notification for successful execution
+      setToastOpen(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to execute query');
       setQueryResult(null);
@@ -76,6 +82,11 @@ export default function QueryPage() {
     setHistory(prev => prev.filter(item => item.id !== id));
   }, []);
 
+  const handleToastClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return;
+    setToastOpen(false);
+  };
+
   return (
     <Box sx={{ 
       minHeight: '100vh',
@@ -104,7 +115,7 @@ export default function QueryPage() {
           sx={{
             position: 'absolute',
             right: isHistoryOpen ? 8 : '50%',
-            top: isHistoryOpen ? 8 : 8,
+            top: 8,
             transform: isHistoryOpen ? 'none' : 'translateX(50%)',
             color: 'white',
             '&:hover': {
@@ -238,7 +249,18 @@ export default function QueryPage() {
           </Box>
         </Box>
       </Box>
-    </Box>
-  )
-}
 
+      {/* Snackbar Toast Notification */}
+      <Snackbar
+        open={toastOpen}
+        autoHideDuration={3000}
+        onClose={handleToastClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert onClose={handleToastClose} severity="success" sx={{ width: '100%' }}>
+          Query executed successfully!
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
+}
