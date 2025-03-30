@@ -83,10 +83,11 @@ export const QueryHistory = ({ history, onSelectQuery, onDeleteQuery }: QueryHis
         variant="h6"
         sx={{
           color: 'white',
-          px: 3,
-          py: 2,
+          px: { xs: 2, md: 3 },
+          py: { xs: 1.5, md: 2 },
           fontWeight: 600,
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          fontSize: { xs: '1rem', md: '1.25rem' }
         }}
       >
         Query History
@@ -113,9 +114,9 @@ export const QueryHistory = ({ history, onSelectQuery, onDeleteQuery }: QueryHis
           <Box key={date}>
             <Typography
               sx={{
-                px: 3,
-                py: 1.5,
-                fontSize: '0.75rem',
+                px: { xs: 2, md: 3 },
+                py: { xs: 1, md: 1.5 },
+                fontSize: { xs: '0.7rem', md: '0.75rem' },
                 fontWeight: 600,
                 color: 'rgba(255, 255, 255, 0.7)',
                 bgcolor: 'rgba(0, 0, 0, 0.2)',
@@ -136,8 +137,8 @@ export const QueryHistory = ({ history, onSelectQuery, onDeleteQuery }: QueryHis
               >
                 <Box
                   sx={{
-                    px: 3,
-                    py: 1.5,
+                    px: { xs: 2, md: 3 },
+                    py: { xs: 1, md: 1.5 },
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1
@@ -155,7 +156,7 @@ export const QueryHistory = ({ history, onSelectQuery, onDeleteQuery }: QueryHis
                     <Typography
                       sx={{
                         color: 'white',
-                        fontSize: '0.875rem',
+                        fontSize: { xs: '0.75rem', md: '0.875rem' },
                         fontFamily: 'monospace',
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
@@ -198,8 +199,8 @@ export const QueryHistory = ({ history, onSelectQuery, onDeleteQuery }: QueryHis
                 <Collapse in={expandedQuery === item.id}>
                   <Box
                     sx={{
-                      px: 3,
-                      py: 2,
+                      px: { xs: 2, md: 3 },
+                      py: { xs: 1.5, md: 2 },
                       bgcolor: 'rgba(0, 0, 0, 0.2)',
                       display: 'flex',
                       flexDirection: 'column',
@@ -209,7 +210,7 @@ export const QueryHistory = ({ history, onSelectQuery, onDeleteQuery }: QueryHis
                     <Typography
                       sx={{
                         color: 'rgba(255, 255, 255, 0.9)',
-                        fontSize: '0.875rem',
+                        fontSize: { xs: '0.75rem', md: '0.875rem' },
                         fontFamily: 'monospace',
                         whiteSpace: 'pre-wrap',
                         wordBreak: 'break-all'
@@ -219,9 +220,10 @@ export const QueryHistory = ({ history, onSelectQuery, onDeleteQuery }: QueryHis
                     </Typography>
                     <Box sx={{ 
                       display: 'flex', 
-                      gap: 3,
+                      flexDirection: { xs: 'column', md: 'row' },
+                      gap: { xs: 1, md: 3 },
                       color: 'rgba(255, 255, 255, 0.5)',
-                      fontSize: '0.75rem'
+                      fontSize: { xs: '0.7rem', md: '0.75rem' }
                     }}>
                       <span>Time: {formatTime(item.timestamp)}</span>
                       <span>Rows: {item.result.rows.length}</span>
@@ -245,9 +247,9 @@ export const QueryHistory = ({ history, onSelectQuery, onDeleteQuery }: QueryHis
             color: 'white',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
             '& .MuiMenuItem-root': {
-              fontSize: '0.875rem',
-              py: 1,
-              px: 2,
+              fontSize: { xs: '0.75rem', md: '0.875rem' },
+              py: { xs: 0.75, md: 1 },
+              px: { xs: 1.5, md: 2 },
               '&:hover': {
                 bgcolor: 'rgba(255, 255, 255, 0.05)'
               }

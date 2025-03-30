@@ -22,12 +22,17 @@ export const SQLEditor = ({ value, onChange }: SQLEditorProps) => {
       aria-label="SQL Editor"
       options={{
         minimap: { enabled: false },
-        fontSize: 14,
+        lineHeight: 20,
+        fontSize: window.innerWidth < 600 ? 12 : 14,
+        fontFamily: "'Fira Code', monospace",
         lineNumbers: 'on',
         roundedSelection: false,
         scrollBeyondLastLine: false,
         automaticLayout: true,
-        padding: { top: 16, bottom: 16 },
+        padding: {
+          top: window.innerWidth < 600 ? 8 : 16,
+          bottom: window.innerWidth < 600 ? 8 : 16
+        },
         wordWrap: 'on',
         folding: true,
         renderWhitespace: 'none',
@@ -43,7 +48,7 @@ export const SQLEditor = ({ value, onChange }: SQLEditorProps) => {
         },
         accessibilitySupport: "on",
         quickSuggestions: false,
-        tabIndex: 0,
+        tabIndex: 0
       }}
     />
   );

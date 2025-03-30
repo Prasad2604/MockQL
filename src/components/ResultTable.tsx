@@ -47,15 +47,22 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
       }}
     >
       <Box sx={{ 
-        p: 2,
+        p: { xs: 1.5, md: 2 },
         borderBottom: '1px solid',
         borderColor: 'divider',
         display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        gap: 2,
+        alignItems: { xs: 'stretch', md: 'center' },
         justifyContent: 'space-between',
-        alignItems: 'center',
         bgcolor: '#f8fafc'
       }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', md: 'row' },
+          gap: { xs: 1, md: 2 },
+          alignItems: { xs: 'flex-start', md: 'center' }
+        }}>
           <Typography variant="body2" color="text.secondary">
             {result.rows.length} rows
           </Typography>
@@ -63,8 +70,13 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
             {result.executionTime.toFixed(2)}ms
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <FormControl size="small" sx={{ minWidth: 120 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: { xs: 'stretch', md: 'center' },
+          gap: 2 
+        }}>
+          <FormControl size="small" sx={{ minWidth: { xs: '100%', md: 120 } }}>
             <InputLabel>Rows per page</InputLabel>
             <Select
               value={pageSize}
@@ -118,7 +130,18 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
           }
         }}
       >
-        <Table stickyHeader size="small" sx={{ minWidth: result.columns.length * 150 }}>
+        <Table 
+          stickyHeader 
+          size="small" 
+          sx={{ 
+            minWidth: { xs: 800, md: result.columns.length * 150 },
+            '& .MuiTableCell-root': {
+              px: { xs: 1, md: 2 },
+              py: { xs: 1, md: 1.5 },
+              fontSize: { xs: '0.75rem', md: '0.875rem' }
+            }
+          }}
+        >
           <TableHead>
             <TableRow>
               {result.columns.map((column) => (
@@ -130,7 +153,7 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
                     color: '#475569',
                     borderBottom: '2px solid',
                     borderColor: 'divider',
-                    minWidth: 150,
+                    minWidth: { xs: 120, md: 150 },
                     whiteSpace: 'nowrap'
                   }}
                 >
@@ -155,7 +178,7 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
                     key={`${rowIndex}-${cellIndex}`}
                     sx={{
                       color: '#1e293b',
-                      minWidth: 150,
+                      minWidth: { xs: 120, md: 150 },
                       whiteSpace: 'nowrap',
                       fontFamily: 'monospace'
                     }}

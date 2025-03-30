@@ -30,7 +30,7 @@ export default function QueryPage() {
   const [sqlInput, setSqlInput] = useState("");
   const [queryResult, setQueryResult] = useState<QueryResult | null>(null);
   const [history, setHistory] = useState<QueryHistoryType[]>([]);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(true);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toastOpen, setToastOpen] = useState(false);
@@ -109,32 +109,35 @@ export default function QueryPage() {
         bgcolor: "#f1f5f9",
         display: "flex",
         overflow: "hidden",
+        position: "relative",
       }}
     >
-      {/* History Panel */}
+      {/* History Panel - Mobile Overlay */}
       <Box
         sx={{
-          width: isHistoryOpen ? 300 : 40,
-          height: "100vh",
-          borderRight: "1px solid",
+          width: { xs: "100%", md: isHistoryOpen ? 300 : 40 },
+          height: { xs: "100%", md: "100vh" },
+          borderRight: { xs: "none", md: "1px solid" },
           borderColor: "divider",
           bgcolor: "#1e293b",
-          transition: "width 0.3s ease",
+          transition: "all 0.3s ease",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          position: "relative",
+          position: { xs: "absolute", md: "relative" },
+          zIndex: { xs: isHistoryOpen ? 1200 : -1, md: 1 },
+          transform: { xs: isHistoryOpen ? "translateX(0)" : "translateX(-100%)", md: "none" },
         }}
       >
         <IconButton
           onClick={() => setIsHistoryOpen(!isHistoryOpen)}
-          aria-label={isHistoryOpen ? "Close history panel" : "Open history panel"} // Add aria-label
-          title={isHistoryOpen ? "Close history panel" : "Open history panel"} // Add title for tooltips
+          aria-label={isHistoryOpen ? "Close history panel" : "Open history panel"}
+          title={isHistoryOpen ? "Close history panel" : "Open history panel"}
           sx={{
             position: "absolute",
-            right: isHistoryOpen ? 8 : "50%",
+            right: { xs: 8, md: isHistoryOpen ? 8 : "50%" },
             top: 8,
-            transform: isHistoryOpen ? "none" : "translateX(50%)",
+            transform: { xs: "none", md: isHistoryOpen ? "none" : "translateX(50%)" },
             color: "white",
             "&:hover": {
               bgcolor: "rgba(255, 255, 255, 0.1)",
@@ -172,16 +175,46 @@ export default function QueryPage() {
           flex: 1,
           height: "100vh",
           overflow: "hidden",
-          p: 4,
+          p: { xs: 2, md: 4 },
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, color: "#1e293b", mb: 1 }}>
-            SQL Query Visualizer
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Write and execute SQL queries with instant visualization
-          </Typography>
+        <Box sx={{ 
+          mb: { xs: 2, md: 4 },
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2
+        }}>
+          {/* Mobile Menu Button */}
+          <IconButton
+            onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+            aria-label={isHistoryOpen ? "Close history panel" : "Open history panel"}
+            title={isHistoryOpen ? "Close history panel" : "Open history panel"}
+            sx={{
+              display: { xs: 'flex', md: 'none' },
+              color: '#1e293b',
+              '&:hover': {
+                bgcolor: 'rgba(30, 41, 59, 0.04)',
+              },
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          <Box>
+            <Typography variant="h4" sx={{ 
+              fontWeight: 700, 
+              color: "#1e293b", 
+              mb: 1,
+              fontSize: { xs: '1.5rem', md: '2rem' }
+            }}>
+              SQL Query Visualizer
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
+              Write and execute SQL queries with instant visualization
+            </Typography>
+          </Box>
         </Box>
 
         <Box
@@ -189,7 +222,7 @@ export default function QueryPage() {
             height: "calc(100vh - 140px)",
             display: "flex",
             flexDirection: "column",
-            gap: 3,
+            gap: { xs: 2, md: 3 },
           }}
         >
           <Paper
@@ -207,25 +240,26 @@ export default function QueryPage() {
           >
             <Box
               sx={{
-                p: 2,
+                p: { xs: 1.5, md: 2 },
                 borderBottom: "1px solid",
                 borderColor: "divider",
                 bgcolor: "#f8fafc",
                 display: "flex",
+                flexDirection: { xs: "column", md: "row" },
                 gap: 2,
-                alignItems: "center",
+                alignItems: { xs: "stretch", md: "center" },
                 justifyContent: "space-between",
               }}
             >
-              <FormControl size="small" sx={{ minWidth: "70%" }}>
+              <FormControl size="small" sx={{ minWidth: { xs: "100%", md: "70%" } }}>
                 <InputLabel id="predefined-queries-label">Predefined Queries</InputLabel>
                 <Select
-                  labelId="predefined-queries-label" // Ensure association with InputLabel
+                  labelId="predefined-queries-label"
                   id="predefined-queries"
                   value={selectedQuery?.id || ""}
                   label="Predefined Queries"
                   onChange={(e) => handleQuerySelect(e.target.value)}
-                  aria-label="Select a predefined SQL query" // Add accessible name
+                  aria-label="Select a predefined SQL query"
                 >
                   {predefinedQueries.map((query) => (
                     <MenuItem key={query.id} value={query.id}>
@@ -245,6 +279,7 @@ export default function QueryPage() {
                 sx={{
                   textTransform: "none",
                   boxShadow: "none",
+                  width: { xs: "100%", md: "auto" },
                   "&:hover": {
                     boxShadow: "none",
                   },
@@ -265,7 +300,7 @@ export default function QueryPage() {
               <Paper
                 elevation={0}
                 sx={{
-                  p: 3,
+                  p: { xs: 2, md: 3 },
                   borderRadius: 3,
                   border: "1px solid #fecdd3",
                   bgcolor: "#fff1f2",
