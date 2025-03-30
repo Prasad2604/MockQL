@@ -1,19 +1,17 @@
 import { useState, useMemo } from 'react';
-import { 
-  Box, 
-  Typography, 
-  IconButton, 
-  Menu, 
-  MenuItem,
-  Collapse,
-} from '@mui/material';
-import { 
-  MoreVert as MoreVertIcon,
-  PlayArrow as PlayArrowIcon,
-  Delete as DeleteIcon,
-  KeyboardArrowDown as KeyboardArrowDownIcon,
-  KeyboardArrowUp as KeyboardArrowUpIcon
-} from '@mui/icons-material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Collapse from '@mui/material/Collapse';
+
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import DeleteIcon from '@mui/icons-material/Delete';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
 import { QueryHistory as QueryHistoryType } from '../types';
 
 interface QueryHistoryProps {
