@@ -28,15 +28,15 @@ export const parseCSV = async (fileName: string): Promise<CSVData> => {
     }
 
     const csvText = await response.text();
-    console.log("filename: ",fileName, " data : ",csvText);
+    // console.log("filename: ",fileName, " data : ",csvText);
     // Offload parsing to the worker
     const data = await parseCSVInWorker(fileName, csvText);
-    console.log("data : ---------------------------------- ",data);
+    // console.log("data : ---------------------------------- ",data);
     // Cache the parsed data for future use
     csvCache[fileName] = data;
     return data;
   } catch (error) {
-    console.error("Error parsing CSV:", error);
+    // console.error("Error parsing CSV:", error);
     throw new Error(`Failed to parse CSV file: ${fileName}`);
   }
 };
@@ -72,11 +72,7 @@ function parseCSVInWorker(fileName: string, csvText: string): Promise<CSVData> {
   }
   
 
-/**
- * Executes a query by randomly selecting one of the available CSV files.
- *
- * For any query provided, a random CSV file from the available tables is used.
- */
+
 export const executeQuery = async (
   query: string,
   tableName?: string
