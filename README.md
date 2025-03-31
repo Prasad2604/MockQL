@@ -1,6 +1,8 @@
 # MockQL
 
-![MockQL Banner](./src/screenshots/MockQL_banner.png)
+<p align="center">
+  <img src="./src/screenshots/MockQL_banner.png" alt="MockQL Banner">
+</p>
 
 ## 📌 Overview
 
