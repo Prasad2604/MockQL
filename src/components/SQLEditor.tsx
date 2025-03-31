@@ -1,6 +1,7 @@
-import { default as Editor } from '@monaco-editor/react';
-import { useCallback } from 'react';
-
+import { useCallback } from "react";
+import { EditorView } from "codemirror";
+import { sql } from "@codemirror/lang-sql";
+import { useCodeMirror } from "@uiw/react-codemirror";
 
 interface SQLEditorProps {
   value: string;
@@ -8,48 +9,34 @@ interface SQLEditorProps {
 }
 
 export const SQLEditor = ({ value, onChange }: SQLEditorProps) => {
-  const handleEditorChange = useCallback((value: string | undefined) => {
-    onChange(value || '');
+  const handleEditorChange = useCallback((val: string) => {
+    onChange(val);
   }, [onChange]);
 
+  const { setContainer } = useCodeMirror({
+    value,
+    onChange: handleEditorChange,
+    extensions: [
+      sql(), // SQL syntax highlighting
+      EditorView.lineWrapping, // Enable word wrapping
+    ],
+    basicSetup: {
+      lineNumbers: true,
+    },
+  });
+
   return (
-    <Editor
-      height="100%"
-      defaultLanguage="sql"
-      value={value}
-      onChange={handleEditorChange}
-      theme="light"
-      aria-label="SQL Editor"
-      options={{
-        minimap: { enabled: false },
-        lineHeight: 20,
-        fontSize: window.innerWidth < 600 ? 12 : 14,
+    <div
+      ref={setContainer}
+      style={{
         fontFamily: "'Fira Code', monospace",
-        lineNumbers: 'on',
-        roundedSelection: false,
-        scrollBeyondLastLine: false,
-        automaticLayout: true,
-        padding: {
-          top: window.innerWidth < 600 ? 8 : 16,
-          bottom: window.innerWidth < 600 ? 8 : 16
-        },
-        wordWrap: 'on',
-        folding: true,
-        renderWhitespace: 'none',
-        scrollbar: {
-          vertical: 'visible',
-          horizontal: 'visible',
-          useShadows: false,
-          verticalScrollbarSize: 10,
-          horizontalScrollbarSize: 10,
-          verticalSliderSize: 10,
-          horizontalSliderSize: 10,
-          arrowSize: 30
-        },
-        accessibilitySupport: "on",
-        quickSuggestions: false,
-        tabIndex: 0
+        fontSize: window.innerWidth < 600 ? 12 : 14,
+        lineHeight: "20px",
+        minHeight: "100px",
+        maxHeight: "300px",
+        border: "1px solid #ccc",
+        borderRadius: "4px",
       }}
     />
   );
-}; 
+};

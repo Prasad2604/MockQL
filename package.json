@@ -10,11 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/lang-sql": "^6.8.0",
+    "@codemirror/language": "^6.11.0",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.36.5",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@monaco-editor/react": "^4.7.0",
     "@mui/icons-material": "^7.0.1",
     "@mui/material": "^7.0.1",
+    "@uiw/react-codemirror": "^4.23.10",
     "mockql": "file:",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
