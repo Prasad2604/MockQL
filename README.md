@@ -53,6 +53,10 @@ MockQL is designed with an intuitive layout and user-friendly controls:
 
 ## 📌 User Flow
 
+<p align="center">
+  <img src="./src/screenshots/MockQL_flow.png" alt="MockQL Banner">
+</p>
+
 1. **User Input:** The user writes a new SQL query in the editor or selects a predefined query.
 2. **Query Execution:** The query is processed and executed.
 3. **Result Handling:** The executed query returns a result set, which can be sorted based on different columns.
@@ -60,6 +64,10 @@ MockQL is designed with an intuitive layout and user-friendly controls:
 5. **History Actions:** Users can rerun past queries or delete them from history as needed.
 
 ## 📌 Application Architecture
+
+<p align="center">
+  <img src="./src/screenshots/MockQL_architecture.png" alt="MockQL Banner">
+</p>
 
 MockQL follows a modular and scalable architecture with the following components:
 
