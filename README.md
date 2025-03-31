@@ -98,9 +98,9 @@ MockQL is optimized for high performance using:
 
 ## 📌 Lighthouse Performance Scores
 
-- **Navigation Test:** High efficiency for seamless navigation.
-- **Timespan Test:** Optimized response times for query execution.
-- **Snapshot Test:** Smooth UI rendering and interactions.
+<p align="center">
+  <img src="./src/screenshots/performance-result.jpg" alt="MockQL Banner">
+</p>
 
 ## 📌 Conclusion
 
