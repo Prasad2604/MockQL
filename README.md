@@ -2,113 +2,88 @@
 
 ![MockQL Banner](./screenshots/banner.png)
 
-MockQL is a modern SQL query interface designed for efficient data visualization and query management. With a focus on performance and usability, it features a virtualized table system capable of handling large datasets smoothly while maintaining responsive performance.
+MockQL is a high-performance SQL data visualization application designed with a focus on efficiency, usability, and smooth handling of large datasets. The application features a virtualized table system that can handle extensive data sets while maintaining responsive performance and providing intuitive data manipulation capabilities.
 
-## Core Features
+## Overview
 
-### Query Results Visualization
+MockQL stands out for its ability to efficiently display and manage large SQL query results through:
 
-- **High-Performance Data Table**: Efficiently handles large datasets using virtualization
-- **Real-time Performance Metrics**: Shows row count and execution time for each query
-- **Smart Column Management**: Automatic column width handling with horizontal scrolling
-- **Alternating Row Colors**: Enhanced readability with zebra-striped rows
-- **Interactive Sorting**: Sort any column in ascending or descending order with visual indicators
+- **Virtualized Data Rendering**: Handles large datasets smoothly by only rendering visible rows
+- **Interactive Data Sorting**: Sort any column with intuitive controls and visual indicators
+- **Responsive Design**: Adapts seamlessly to different screen sizes and orientations
+- **Performance Metrics**: Real-time display of row counts and execution times
+- **Dark Mode Support**: Enhanced visibility and reduced eye strain in different lighting conditions
 
-### Performance Features
+### Core Features
 
-- **Virtualized Scrolling**: Only renders visible rows for optimal performance
-- **Dynamic Height Adjustment**: Automatically adjusts to container size
-- **Smooth Scrolling**: Implements row overscan for seamless scrolling experience
-- **Memory Efficient**: Minimizes DOM elements and memory usage
-- **Optimized Sorting**: Efficient sorting algorithm with type-aware comparisons
+#### Advanced Data Table
 
-### User Experience
+- Virtualized scrolling for efficient handling of large datasets
+- Interactive column headers with sort indicators
+- Smooth horizontal scrolling for wide datasets
+- Alternating row colors for better readability
+- Fixed headers while scrolling
 
-- **Responsive Design**: Adapts seamlessly to different screen sizes
-- **Dark Mode Support**: Comfortable viewing in different lighting conditions
-- **Sticky Headers**: Column headers remain visible while scrolling
-- **Smooth Scrollbar**: Custom-styled scrollbar with hover effects
-- **Sort Indicators**: Clear visual feedback for sort direction with arrow icons
+#### Performance Features
 
-## Tech Stack
+- Dynamic row virtualization (only renders visible rows)
+- Optimized sorting algorithms for both numeric and string data
+- Efficient memory usage through row recycling
+- Smart resize handling with ResizeObserver
+- Minimal DOM updates for smooth scrolling
 
-### Framework and Language
+#### User Experience
 
-- **React** with TypeScript - For robust type safety and component architecture
-- **Vite** - For fast development and optimized builds
+- Intuitive sorting controls with visual feedback
+- Responsive layout that adapts to screen size
+- Custom-styled scrollbars for better control
+- Clear performance metrics display
+- Smooth transitions and hover effects
 
-### Major Plugins and Packages
+## Technical Implementation
 
-#### UI & Styling
+### Performance Optimizations
 
-- **@mui/material**: ^5.x.x - Material UI components and theming
-- **@mui/icons-material**: ^5.x.x - Material design icons
+- Uses `react-window` for efficient row virtualization
+- Implements memoized components to prevent unnecessary re-renders
+- Employs dynamic height calculations for optimal viewport usage
+- Features type-aware sorting for better performance
+- Utilizes efficient DOM recycling for large datasets
 
-#### Tables & Large Data Handling
+### Key Metrics
 
-- **react-window**: ^1.8.x - Virtualized rendering for large datasets
+- Renders only 10-15 rows at a time regardless of dataset size
+- Maintains smooth 60fps scrolling performance
+- Instant sorting operations with visual feedback
+- Responsive across different screen sizes
+- Minimal memory footprint through virtualization
 
-## Performance Optimizations
+### Smart Features
 
-### Virtualization Implementation
+- Intelligent column width management
+- Automatic height adjustments
+- Smooth scrolling with row overscan
+- Type-aware sorting (handles both numbers and strings)
+- Case-insensitive string comparisons
 
-```typescript
-<List
-  height={tableHeight}
-  itemCount={result.rows.length}
-  itemSize={ROW_HEIGHT}
-  width="100%"
-  overscanCount={OVERSCAN_COUNT}
->
-  {Row}
-</List>
-```
+## Technical Stack
 
-### Dynamic Sizing
+### Core Technologies
 
-```typescript
-const resizeObserver = new ResizeObserver(updateTableHeight);
-if (containerRef.current) {
-  resizeObserver.observe(containerRef.current);
+- **React** with TypeScript for robust type safety
+- **Material-UI** for consistent design components
+- **react-window** for virtualized rendering
+- **Custom Hooks** for efficient state management
+
+### Key Dependencies
+
+```json
+{
+  "@mui/material": "^5.x.x",
+  "@mui/icons-material": "^5.x.x",
+  "react-window": "^1.8.x"
 }
 ```
-
-### Sorting Implementation
-
-```typescript
-const handleSort = (columnIndex: number) => {
-  // ... sort configuration logic ...
-
-  const sorted = [...rows].sort((a, b) => {
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return direction === "asc" ? aValue - bValue : bValue - aValue;
-    }
-    return direction === "asc"
-      ? String(aValue).localeCompare(String(bValue))
-      : String(bValue).localeCompare(String(aValue));
-  });
-};
-```
-
-### Key Optimizations
-
-1. **Virtualized Rendering**
-
-   - Only renders visible rows (typically 10-15 at a time)
-   - Uses 5 items overscan for smooth scrolling
-   - Reduces memory usage and DOM elements
-
-2. **Smart Layout Management**
-
-   - ResizeObserver for dynamic height calculations
-   - Efficient single horizontal scrollbar
-   - Sticky headers with proper z-indexing
-
-3. **Component Optimization**
-   - Memoized row components using useCallback
-   - Efficient text overflow handling
-   - Optimized column width calculations
-   - Type-aware sorting for better performance
 
 ## Getting Started
 
@@ -123,32 +98,29 @@ npm install
 npm run dev
 ```
 
-## Performance Metrics
+## Future Roadmap
 
-The table component is optimized to handle large datasets efficiently:
-
-- Renders only visible rows (typically 10-15 at a time)
-- Maintains smooth 60fps scrolling performance
-- Minimal memory footprint due to row virtualization
-- Instant updates for sorting and filtering operations
-- Fast sorting performance with optimized comparisons
-
-## Future Improvements
+### Planned Features
 
 1. **Data Management**
 
-   - Add filtering capabilities
-   - Enable CSV export
-   - Add multi-column sorting
+   - CSV export functionality
+   - Column filtering capabilities
+   - Multi-column sorting
+   - Search within results
 
-2. **Performance**
-   - Add column virtualization for wide datasets
-   - Implement progressive loading for very large datasets
-   - Cache sort results for frequently sorted columns
+2. **Performance Enhancements**
 
-## Contact
+   - Column virtualization for wide datasets
+   - Progressive loading for very large datasets
+   - Sort result caching
+   - Advanced data type detection
 
-For any inquiries or support, please open an issue in this repository.
+3. **User Experience**
+   - Customizable column widths
+   - Pinned columns
+   - Row selection
+   - Aggregate functions
 
 ## License
 
