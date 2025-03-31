@@ -4,13 +4,27 @@ import Typography from '@mui/material/Typography';
 import { FixedSizeList as List } from 'react-window';
 import { QueryResult } from '../types';
 import { useCallback, useRef, useState, useEffect } from 'react';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+
+type SortConfig = {
+  key: string;
+  direction: 'asc' | 'desc' | null;
+};
 
 export const ResultsTable = ({ result }: { result: QueryResult }) => {
   const [tableHeight, setTableHeight] = useState(400);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: '', direction: null });
+  const [sortedRows, setSortedRows] = useState(result.rows);
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const ROW_HEIGHT = 36;
   const OVERSCAN_COUNT = 5;
+
+  useEffect(() => {
+    setSortedRows(result.rows);
+  }, [result.rows]);
 
   useEffect(() => {
     const updateTableHeight = () => {
@@ -37,8 +51,47 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
     };
   }, []);
 
+  const handleSort = (columnIndex: number) => {
+    const columnKey = result.columns[columnIndex];
+    let direction: 'asc' | 'desc' | null = 'asc';
+
+    if (sortConfig.key === columnKey) {
+      if (sortConfig.direction === 'asc') {
+        direction = 'desc';
+      } else if (sortConfig.direction === 'desc') {
+        direction = null;
+      }
+    }
+
+    setSortConfig({ key: columnKey, direction });
+
+    if (direction === null) {
+      setSortedRows([...result.rows]);
+      return;
+    }
+
+    const sorted = [...sortedRows].sort((a, b) => {
+      const aValue = a[columnIndex];
+      const bValue = b[columnIndex];
+
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return direction === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+
+      const aString = String(aValue).toLowerCase();
+      const bString = String(bValue).toLowerCase();
+      
+      if (direction === 'asc') {
+        return aString.localeCompare(bString);
+      }
+      return bString.localeCompare(aString);
+    });
+
+    setSortedRows(sorted);
+  };
+
   const Row = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
-    const row = result.rows[index];
+    const row = sortedRows[index];
     return (
       <div
         style={{
@@ -53,7 +106,6 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
             key={`${index}-${cellIndex}`}
             style={{
               flex: 1,
-              // minWidth: 150,
               padding: '0 16px',
               display: 'flex',
               alignItems: 'center',
@@ -71,7 +123,26 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
         ))}
       </div>
     );
-  }, [result.rows]);
+  }, [sortedRows]);
+
+  const getSortIcon = (column: string) => {
+    const isActive = sortConfig.key === column;
+    const iconStyle = {
+      fontSize: 16,
+      color: isActive ? '#475569' : '#94a3b8',
+      transition: 'color 0.2s ease'
+    };
+
+    if (!isActive || !sortConfig.direction) {
+      return <UnfoldMoreIcon sx={iconStyle} />;
+    }
+
+    return sortConfig.direction === 'asc' ? (
+      <ArrowUpwardIcon sx={iconStyle} />
+    ) : (
+      <ArrowDownwardIcon sx={iconStyle} />
+    );
+  };
 
   return (
     <Paper 
@@ -148,10 +219,11 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
                 zIndex: 1,
               }}
             >
-              {result.columns.map((column) => (
-                <div
+              {result.columns.map((column, index) => (
+                <Box
                   key={column}
-                  style={{
+                  onClick={() => handleSort(index)}
+                  sx={{
                     flex: 1,
                     minWidth: 150,
                     padding: '0 16px',
@@ -162,17 +234,37 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
                     alignItems: 'center',
                     whiteSpace: 'nowrap',
                     fontSize: '0.875rem',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    gap: '4px',
+                    transition: 'background-color 0.2s ease',
+                    '&:hover': {
+                      bgcolor: '#f1f5f9',
+                      '& .sort-icon': {
+                        color: '#475569 !important'
+                      }
+                    }
                   }}
                 >
-                  {column}
-                </div>
+                  <Box sx={{ 
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}>
+                    <span style={{ flex: 1 }}>{column}</span>
+                    <Box className="sort-icon">
+                      {getSortIcon(column)}
+                    </Box>
+                  </Box>
+                </Box>
               ))}
             </div>
 
             {/* Rows */}
             <List
               height={tableHeight}
-              itemCount={result.rows.length}
+              itemCount={sortedRows.length}
               itemSize={ROW_HEIGHT}
               width="100%"
               overscanCount={OVERSCAN_COUNT}
