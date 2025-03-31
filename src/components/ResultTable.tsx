@@ -207,7 +207,7 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
             }
           }
         }}>
-          <div style={{ minWidth: result.columns.length * 150 }}>
+          <div style={{ minWidth: result.columns.length * 250 }}>
             {/* Header */}
             <div
               style={{
@@ -225,7 +225,7 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
                   onClick={() => handleSort(index)}
                   sx={{
                     flex: 1,
-                    minWidth: 150,
+                    minWidth: 250,
                     padding: '0 16px',
                     fontWeight: 600,
                     color: '#475569',
