@@ -42,10 +42,11 @@ export const SQLEditor = ({ value, onChange }: SQLEditorProps) => {
           fontFamily: "'Fira Code', monospace",
           fontSize: window.innerWidth < 600 ? 12 : 14,
           lineHeight: "20px",
-          minHeight: "100px",
-          maxHeight: "300px",
+          minHeight: "125px",
+          maxHeight: "125px",
           border: "1px solid #ccc",
           borderRadius: "4px",
+          overflowY: "auto",
         }}
       />
     </div>
