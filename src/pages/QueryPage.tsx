@@ -209,7 +209,7 @@ export default function QueryPage() {
               mb: 1,
               fontSize: { xs: '1.5rem', md: '2rem' }
             }}>
-              SQL Query Visualizer
+              MockQL
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
               Write and execute SQL queries with instant visualization
