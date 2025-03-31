@@ -1,37 +1,77 @@
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Pagination from '@mui/material/Pagination';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import { FixedSizeList as List } from 'react-window';
 import { QueryResult } from '../types';
-import { useState, useCallback } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 
 export const ResultsTable = ({ result }: { result: QueryResult }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(50);
+  const [tableHeight, setTableHeight] = useState(400);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const ROW_HEIGHT = 36;
+  const OVERSCAN_COUNT = 5;
 
-  const totalPages = Math.ceil(result.rows.length / pageSize);
+  useEffect(() => {
+    const updateTableHeight = () => {
+      if (containerRef.current && headerRef.current) {
+        const containerHeight = containerRef.current.clientHeight;
+        const headerHeight = headerRef.current.clientHeight;
+        setTableHeight(containerHeight - headerHeight);
+      }
+    };
 
-  const handlePageChange = useCallback((_: React.ChangeEvent<unknown>, value: number) => {
-    setCurrentPage(value);
+    updateTableHeight();
+    
+    const resizeObserver = new ResizeObserver(updateTableHeight);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+    if (headerRef.current) {
+      resizeObserver.observe(headerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateTableHeight);
+    };
   }, []);
 
-  const handlePageSizeChange = useCallback((event: any) => {
-    setPageSize(event.target.value);
-    setCurrentPage(1);
-  }, []);
-
-  const startIndex = (currentPage - 1) * pageSize;
-  const currentPageRows = result.rows.slice(startIndex, startIndex + pageSize);
+  const Row = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
+    const row = result.rows[index];
+    return (
+      <div
+        style={{
+          ...style,
+          display: 'flex',
+          borderBottom: '1px solid #e2e8f0',
+          backgroundColor: index % 2 === 0 ? 'white' : '#f8fafc',
+        }}
+      >
+        {row.map((cell: string | number, cellIndex: number) => (
+          <div
+            key={`${index}-${cellIndex}`}
+            style={{
+              flex: 1,
+              // minWidth: 150,
+              padding: '0 16px',
+              display: 'flex',
+              alignItems: 'center',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              color: '#1e293b',
+              fontFamily: 'monospace',
+              fontSize: '0.875rem',
+              height: ROW_HEIGHT,
+            }}
+          >
+            {cell?.toString() || ''}
+          </div>
+        ))}
+      </div>
+    );
+  }, [result.rows]);
 
   return (
     <Paper 
@@ -46,79 +86,44 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
         flexDirection: 'column'
       }}
     >
-      <Box sx={{ 
-        p: { xs: 1.5, md: 2 },
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        display: 'flex',
-        flexDirection: { xs: 'column', md: 'row' },
-        gap: 2,
-        alignItems: { xs: 'stretch', md: 'center' },
-        justifyContent: 'space-between',
-        bgcolor: '#f8fafc'
-      }}>
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: { xs: 'column', md: 'row' },
-          gap: { xs: 1, md: 2 },
-          alignItems: { xs: 'flex-start', md: 'center' }
-        }}>
-          <Typography variant="body2" color="text.secondary">
-            {result.rows.length} rows
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {result.executionTime.toFixed(2)}ms
-          </Typography>
-        </Box>
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: { xs: 'column', md: 'row' },
-          alignItems: { xs: 'stretch', md: 'center' },
-          gap: 2 
-        }}>
-          <FormControl size="small" sx={{ minWidth: { xs: '100%', md: 120 } }}>
-            <InputLabel>Rows per page</InputLabel>
-            <Select
-              value={pageSize}
-              label="Rows per page"
-              aria-label="rows per page"
-              id="row-per-page"
-              onChange={handlePageSizeChange}
-            >
-              <MenuItem value={25}>25</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-              <MenuItem value={200}>200</MenuItem>
-            </Select>
-          </FormControl>
-          <Pagination
-            count={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-            size="small"
-            sx={{
-              '& .MuiPaginationItem-root': {
-                color: '#64748b',
-                '&.Mui-selected': {
-                  bgcolor: '#e2e8f0',
-                  color: '#1e293b',
-                  '&:hover': {
-                    bgcolor: '#cbd5e1'
-                  }
-                }
-              }
-            }}
-          />
-        </Box>
+      <Box 
+        ref={headerRef}
+        sx={{ 
+          p: { xs: 1.5, md: 2 },
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          display: 'flex',
+          gap: 2,
+          alignItems: 'center',
+          bgcolor: '#f8fafc'
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          {result.rows.length} rows
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {result.executionTime.toFixed(2)}ms
+        </Typography>
       </Box>
 
-      <TableContainer 
+      <Box 
+        ref={containerRef}
         sx={{ 
           flex: 1,
-          overflow: 'auto',
+          overflow: 'hidden',
+          position: 'relative'
+        }}
+      >
+        <Box sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          overflowX: 'auto',
+          overflowY: 'hidden',
           '&::-webkit-scrollbar': {
             height: '8px',
-            width: '8px',
           },
           '&::-webkit-scrollbar-track': {
             backgroundColor: '#f1f5f9'
@@ -130,69 +135,53 @@ export const ResultsTable = ({ result }: { result: QueryResult }) => {
               backgroundColor: '#94a3b8'
             }
           }
-        }}
-      >
-        <Table 
-          stickyHeader 
-          size="small" 
-          sx={{ 
-            minWidth: { xs: 800, md: result.columns.length * 150 },
-            '& .MuiTableCell-root': {
-              px: { xs: 1, md: 2 },
-              py: { xs: 1, md: 1.5 },
-              fontSize: { xs: '0.75rem', md: '0.875rem' }
-            }
-          }}
-        >
-          <TableHead>
-            <TableRow>
+        }}>
+          <div style={{ minWidth: result.columns.length * 150 }}>
+            {/* Header */}
+            <div
+              style={{
+                display: 'flex',
+                backgroundColor: '#f8fafc',
+                borderBottom: '2px solid #e2e8f0',
+                position: 'sticky',
+                top: 0,
+                zIndex: 1,
+              }}
+            >
               {result.columns.map((column) => (
-                <TableCell
+                <div
                   key={column}
-                  sx={{
-                    bgcolor: '#f8fafc',
+                  style={{
+                    flex: 1,
+                    minWidth: 150,
+                    padding: '0 16px',
                     fontWeight: 600,
                     color: '#475569',
-                    borderBottom: '2px solid',
-                    borderColor: 'divider',
-                    minWidth: { xs: 120, md: 150 },
-                    whiteSpace: 'nowrap'
+                    height: ROW_HEIGHT,
+                    display: 'flex',
+                    alignItems: 'center',
+                    whiteSpace: 'nowrap',
+                    fontSize: '0.875rem',
                   }}
                 >
                   {column}
-                </TableCell>
+                </div>
               ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {currentPageRows.map((row, rowIndex) => (
-              <TableRow
-                key={rowIndex}
-                hover
-                sx={{
-                  '&:hover': {
-                    bgcolor: '#f1f5f9'
-                  }
-                }}
-              >
-                {row.map((cell: string | number, cellIndex: number) => (
-                  <TableCell
-                    key={`${rowIndex}-${cellIndex}`}
-                    sx={{
-                      color: '#1e293b',
-                      minWidth: { xs: 120, md: 150 },
-                      whiteSpace: 'nowrap',
-                      fontFamily: 'monospace'
-                    }}
-                  >
-                    {cell?.toString() || ''}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </div>
+
+            {/* Rows */}
+            <List
+              height={tableHeight}
+              itemCount={result.rows.length}
+              itemSize={ROW_HEIGHT}
+              width="100%"
+              overscanCount={OVERSCAN_COUNT}
+            >
+              {Row}
+            </List>
+          </div>
+        </Box>
+      </Box>
     </Paper>
   );
-}; 
+};
