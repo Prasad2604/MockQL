@@ -1,131 +1,97 @@
 # MockQL
 
-![MockQL Banner](./screenshots/banner.png)
+![MockQL Banner](./src/screenshots/MockQL_banner.png)
 
-MockQL is a high-performance SQL data visualization application designed with a focus on efficiency, usability, and smooth handling of large datasets. The application features a virtualized table system that can handle extensive data sets while maintaining responsive performance and providing intuitive data manipulation capabilities.
+## 📌 Overview
 
-## Overview
+MockQL is an interactive SQL query execution platform that allows users to write, execute, and manage SQL queries efficiently. Designed for usability and performance, MockQL provides a seamless data exploration experience with essential and advanced functionalities such as query history, virtualized tables, and sorting.
 
-MockQL stands out for its ability to efficiently display and manage large SQL query results through:
+- **Website:** [MockQL Live](https://mock-ql.vercel.app/)
+- **GitHub Repository:** [MockQL GitHub](https://github.com/Prasad2604/MockQL)
 
-- **Virtualized Data Rendering**: Handles large datasets smoothly by only rendering visible rows
-- **Interactive Data Sorting**: Sort any column with intuitive controls and visual indicators
-- **Responsive Design**: Adapts seamlessly to different screen sizes and orientations
-- **Performance Metrics**: Real-time display of row counts and execution times
-- **Dark Mode Support**: Enhanced visibility and reduced eye strain in different lighting conditions
+📌 Video Demonstration
 
-### Core Features
+[MockQL Demo Video](https://www.loom.com/share/8ea895c101764c4f8162cf4dc593a2db?sid=e72ba5a2-bdca-4e0d-981c-1c7dea3c992e)
 
-#### Advanced Data Table
+## 📌 Tech Stack
 
-- Virtualized scrolling for efficient handling of large datasets
-- Interactive column headers with sort indicators
-- Smooth horizontal scrolling for wide datasets
-- Alternating row colors for better readability
-- Fixed headers while scrolling
+MockQL is built using modern web technologies to ensure high performance and a great user experience:
 
-#### Performance Features
+- **Frontend:** React, TypeScript
+- **State Management:** React Hooks
+- **UI Framework:** Material-UI (MUI) (@mui/material), Material-UI Icons (@mui/icons-material)
+- **Code Editor:** CodeMirror (@codemirror)
+- **Data Processing:** Web Workers for CSV parsing
+- **Virtualized Rendering:** react-window
+- **Build Tools:** Vite/Webpack
+- **Deployment:** Vercel
 
-- Dynamic row virtualization (only renders visible rows)
-- Optimized sorting algorithms for both numeric and string data
-- Efficient memory usage through row recycling
-- Smart resize handling with ResizeObserver
-- Minimal DOM updates for smooth scrolling
+## 📌 Features
 
-#### User Experience
+### Core Features:
 
-- Intuitive sorting controls with visual feedback
-- Responsive layout that adapts to screen size
-- Custom-styled scrollbars for better control
-- Clear performance metrics display
-- Smooth transitions and hover effects
+- **SQL Query Editor:** A full-featured SQL editor for writing and running queries.
+- **Predefined Queries:** Dropdown selection of commonly used queries for easy execution.
+- **Results Table:** Displays the output of executed queries in a structured format.
 
-## Technical Implementation
+### Advanced Features:
 
-### Performance Optimizations
+- **Query History:** Keeps track of previously executed queries for easy reference.
+- **Virtualized Table Rendering:** Optimized performance for handling large datasets using react-window.
+- **Sorting:** Users can sort query results within the results table.
+- **Rerun Query from History:** Users can run previously executed queries from history.
 
-- Uses `react-window` for efficient row virtualization
-- Implements memoized components to prevent unnecessary re-renders
-- Employs dynamic height calculations for optimal viewport usage
-- Features type-aware sorting for better performance
-- Utilizes efficient DOM recycling for large datasets
+## 📌 User Experience Considerations
 
-### Key Metrics
+MockQL is designed with an intuitive layout and user-friendly controls:
 
-- Renders only 10-15 rows at a time regardless of dataset size
-- Maintains smooth 60fps scrolling performance
-- Instant sorting operations with visual feedback
-- Responsive across different screen sizes
-- Minimal memory footprint through virtualization
+- **Responsive Design:** Works across different screen sizes, ensuring usability on desktops and tablets.
+- **Instant Feedback:** Provides loading indicators, error messages, and success notifications for user actions.
+- **Minimalistic UI:** Keeps the interface clean and distraction-free while maintaining functionality.
 
-### Smart Features
+## 📌 User Flow
 
-- Intelligent column width management
-- Automatic height adjustments
-- Smooth scrolling with row overscan
-- Type-aware sorting (handles both numbers and strings)
-- Case-insensitive string comparisons
+1. **User Input:** The user writes a new SQL query in the editor or selects a predefined query.
+2. **Query Execution:** The query is processed and executed.
+3. **Result Handling:** The executed query returns a result set, which can be sorted based on different columns.
+4. **Query History Management:** Successfully executed queries are stored in history for future reference.
+5. **History Actions:** Users can rerun past queries or delete them from history as needed.
 
-## Technical Stack
+## 📌 Application Architecture
 
-### Core Technologies
+MockQL follows a modular and scalable architecture with the following components:
 
-- **React** with TypeScript for robust type safety
-- **Material-UI** for consistent design components
-- **react-window** for virtualized rendering
-- **Custom Hooks** for efficient state management
+- **Query Input & Execution:**
+  - Users can input queries manually or select from predefined queries.
+  - The query is entered into the SQL editor.
+- **Query Processing & History Management:**
+  - The query is executed and stored in history for reruns or deletion.
+  - Lazy loading optimizes performance by only loading necessary components when required.
+- **CSV Selection & Parsing:**
+  - The system checks if the table name in the query matches a predefined CSV file.
+  - Web Workers handle CSV processing asynchronously to ensure UI responsiveness.
+- **State Management & Query Result Handling:**
+  - The selected CSV file is parsed, and the query result is set.
+  - React Hooks efficiently update state without unnecessary re-renders.
+- **Rendering Results Efficiently:**
+  - Virtualized result table displays processed data using react-window.
+  - Lazy loading ensures only visible rows are rendered, improving performance for large datasets.
 
-### Key Dependencies
+## 📌 Performance & Optimizations
 
-```json
-{
-  "@mui/material": "^5.x.x",
-  "@mui/icons-material": "^5.x.x",
-  "react-window": "^1.8.x"
-}
-```
+MockQL is optimized for high performance using:
 
-## Getting Started
+- **Web Workers:** Parsing large CSV files in a separate thread to prevent UI blocking.
+- **Virtualized Tables:** Efficiently rendering large datasets using react-window.
+- **Code Splitting & Lazy Loading:** Reducing initial load time by loading components on demand.
+- **Optimized Event Handling with useCallback:** Prevents unnecessary re-creation of functions, improving performance in query execution and result table interactions.
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/MockQL.git
+## 📌 Lighthouse Performance Scores
 
-# Install dependencies
-npm install
+- **Navigation Test:** High efficiency for seamless navigation.
+- **Timespan Test:** Optimized response times for query execution.
+- **Snapshot Test:** Smooth UI rendering and interactions.
 
-# Start development server
-npm run dev
-```
+## 📌 Conclusion
 
-## Future Roadmap
-
-### Planned Features
-
-1. **Data Management**
-
-   - CSV export functionality
-   - Column filtering capabilities
-   - Multi-column sorting
-   - Search within results
-
-2. **Performance Enhancements**
-
-   - Column virtualization for wide datasets
-   - Progressive loading for very large datasets
-   - Sort result caching
-   - Advanced data type detection
-
-3. **User Experience**
-   - Customizable column widths
-   - Pinned columns
-   - Row selection
-   - Aggregate functions
-
-## License
-
-MIT License - feel free to use this project for any purpose.
-
----
-
-Made with ❤️ by [Your Name]
+MockQL is a powerful, user-friendly SQL query execution tool designed for efficiency and usability. With advanced features like query history, virtualized rendering, and Web Worker-based parsing, it offers a seamless and high-performance experience. Its modular architecture ensures scalability, making it an ideal solution for executing and managing SQL queries in real-time environments.
