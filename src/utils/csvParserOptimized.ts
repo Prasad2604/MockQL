@@ -1,4 +1,3 @@
-// utils/csvParserOptimized.ts
 import type { CSVData } from "../types";
 
 // In-memory cache for parsed CSV data
@@ -79,25 +78,31 @@ function parseCSVInWorker(fileName: string, csvText: string): Promise<CSVData> {
  * For any query provided, a random CSV file from the available tables is used.
  */
 export const executeQuery = async (
-    query: string,
-    tableName?: string
-  ): Promise<CSVData> => {
-    try {
-        console.log("table name : ",query);
-      if (tableName) {
-        // Use the provided CSV file.
-        return await parseCSV(tableName);
-      } else {
-        // No table provided—choose a random file.
-        const randomFile =
+  query: string,
+  tableName?: string
+): Promise<CSVData> => {
+  try {
+    let selectedFile: string;
+
+    if (tableName) {
+      // Use the provided table name
+      selectedFile = tableName;
+    } else {
+      // Check if query string contains any available table name (ignoring ".csv")
+      selectedFile =
+        AVAILABLE_TABLES.find((file) => {
+          const table = file.replace(".csv", "").toLowerCase();
+          return query.toLowerCase().includes(table);
+        }) ||
+        // Fallback to a random table if no match is found
         AVAILABLE_TABLES[Math.floor(Math.random() * AVAILABLE_TABLES.length)];
-        console.log("random file : ", randomFile);
-        return await parseCSV(randomFile);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Query execution failed: ${error.message}`);
-      }
-      throw error;
     }
-  };
+
+    return await parseCSV(selectedFile);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Query execution failed: ${error.message}`);
+    }
+    throw error;
+  }
+};

@@ -1,4 +1,3 @@
-// QueryPage.tsx
 import React, { useState, useCallback, lazy, Suspense } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import CloseIcon from "@mui/icons-material/Close";
@@ -21,9 +20,15 @@ import { executeQuery } from "../utils/csvParserOptimized"; // optimized CSV par
 import { v4 as uuidv4 } from "uuid";
 
 // Lazy-load heavy components
-const SQLEditor = lazy(() => import("../components/SQLEditor").then(module => ({ default: module.SQLEditor })));
-const ResultsTable = lazy(() => import("../components/ResultTable").then(module => ({default: module.ResultsTable})));
-const QueryHistory = lazy(() => import("../components/QueryHistory").then(module => ({default: module.QueryHistory})));
+const SQLEditor = lazy(() =>
+  import("../components/SQLEditor").then((module) => ({ default: module.SQLEditor }))
+);
+const ResultsTable = lazy(() =>
+  import("../components/ResultTable").then((module) => ({ default: module.ResultsTable }))
+);
+const QueryHistory = lazy(() =>
+  import("../components/QueryHistory").then((module) => ({ default: module.QueryHistory }))
+);
 
 export default function QueryPage() {
   const [selectedQuery, setSelectedQuery] = useState<Query | null>(null);
@@ -35,13 +40,14 @@ export default function QueryPage() {
   const [error, setError] = useState<string | null>(null);
   const [toastOpen, setToastOpen] = useState(false);
 
-  const executeAndUpdateHistory = async (sql: string,tableName?: string) => {
+  // Executes query when "Run Query" is clicked
+  const executeAndUpdateHistory = async (sql: string, tableName?: string) => {
     setIsLoading(true);
     setError(null);
     const startTime = performance.now();
 
     try {
-      const data = await executeQuery(sql,tableName);
+      const data = await executeQuery(sql, tableName);
       const executionTime = performance.now() - startTime;
 
       const result: QueryResult = {
@@ -71,15 +77,12 @@ export default function QueryPage() {
     }
   };
 
+  // When a predefined query is selected, update the editor but don't execute it immediately
   const handleQuerySelect = useCallback((queryId: string) => {
     const query = predefinedQueries.find((q) => q.id === queryId);
-    console.log("inside query page: ",query?.id);
     if (query) {
-      console.log("hi");
       setSelectedQuery(query);
       setSqlInput(query.sql);
-      executeAndUpdateHistory(query.sql,query.table);
-      console.log(query.sql,query.table);
     }
   }, []);
 
@@ -180,22 +183,24 @@ export default function QueryPage() {
           flexDirection: "column",
         }}
       >
-        <Box sx={{ 
-          mb: { xs: 2, md: 4 },
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2
-        }}>
+        <Box
+          sx={{
+            mb: { xs: 2, md: 4 },
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
           {/* Mobile Menu Button */}
           <IconButton
             onClick={() => setIsHistoryOpen(!isHistoryOpen)}
             aria-label={isHistoryOpen ? "Close history panel" : "Open history panel"}
             title={isHistoryOpen ? "Close history panel" : "Open history panel"}
             sx={{
-              display: { xs: 'flex', md: 'none' },
-              color: '#1e293b',
-              '&:hover': {
-                bgcolor: 'rgba(30, 41, 59, 0.04)',
+              display: { xs: "flex", md: "none" },
+              color: "#1e293b",
+              "&:hover": {
+                bgcolor: "rgba(30, 41, 59, 0.04)",
               },
             }}
           >
@@ -203,15 +208,22 @@ export default function QueryPage() {
           </IconButton>
 
           <Box>
-            <Typography variant="h4" sx={{ 
-              fontWeight: 700, 
-              color: "#1e293b", 
-              mb: 1,
-              fontSize: { xs: '1.5rem', md: '2rem' }
-            }}>
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 700,
+                color: "#1e293b",
+                mb: 1,
+                fontSize: { xs: "1.5rem", md: "2rem" },
+              }}
+            >
               MockQL
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ fontSize: { xs: "0.875rem", md: "1rem" } }}
+            >
               Write and execute SQL queries with instant visualization
             </Typography>
           </Box>
